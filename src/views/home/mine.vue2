@@ -1,0 +1,166 @@
+<template>
+    <div class="User-page">
+        <Tabber title="profile" />
+        <div class="User-box">
+            <div class="User-info">
+                <div class="Avatar">
+                    <img src="../../assets/images/avatar.png" alt="">
+                </div>
+                <div class="info">
+                    <p class="name">John Doe</p>
+                    <div class="dengji">
+                        <p class="">Diamond</p>
+                        <p><span>Integral </span><span class="fontBold">95855</span></p>
+                        <p>V1</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <ul class="url-lists">
+            <li v-for="(item,index) in UrlList" :key="index" @click="router.push(item.path)">
+                <div class="left">
+                    <img :src="item.icon" alt="">
+                    <span>{{item.title}}</span>
+                </div>
+                <div class="Present" @click.stop="show=true" v-if="index==2">Present</div>
+                <van-icon name="arrow" v-else />
+            </li>
+        </ul>
+    </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import Tabber from '../../components/Tabber.vue'
+import Icon1 from '../../assets/images/user/Icon1.png'
+import Icon2 from '../../assets/images/user/Icon2.png'
+import Icon3 from '../../assets/images/user/Icon3.png'
+import Icon4 from '../../assets/images/user/Icon4.png'
+import Icon5 from '../../assets/images/user/Icon5.png'
+const router = useRouter()
+const UrlList = ref([
+    {
+        title: 'Cardholder',
+        path: '/order',
+        icon: Icon1,
+    },
+    {
+        title: 'Coupon',
+        path: '/home/Coupon',
+        icon: Icon2,
+    },
+    {
+        title: 'Verification code',
+        path: '/home/VerificationCode',
+        icon: Icon3,
+    },
+    {
+        title: 'My order',
+        path: '/home/order',
+        icon: Icon4,
+    },
+    {
+        title: 'Queue for a number',
+        path: '/home/QueueNumber',
+        icon: Icon5,
+    },
+]);
+const show = ref(false);
+</script>
+
+<style lang="scss" scoped>
+.fontBold{
+    font-weight: bold;
+}
+.url-lists{
+    padding: 10px;
+    li{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px;
+        background: #fff;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        color: #111;
+        .left{
+            display: flex;
+            align-items: center;
+            img{
+                width: 30px;
+                height: 30px;
+                margin-right: 10px;
+            }
+        }
+        .Present{
+            color: #fff;
+            background: #444DFA;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    }
+}
+.User-page{
+    background: #F3F5F9;
+    height: 100%;
+    overflow: auto;
+}
+.User-box{
+    padding: 10px ;
+    padding-bottom: 15px;
+    background: #fff;
+    .User-info{
+        display: flex;
+        align-items: center;
+        padding:  35px 20px;
+        border-radius: 15px;
+        background-image: url('../../assets/images/UserBg.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    .Avatar{
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+        img{
+            width: 100%;
+            height: 100%;
+        }
+    }
+    .info{
+        margin-left: 10px;
+        text-align: left;
+        .name{
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .dengji{
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 5px;
+            p:first-child{
+                color: #3B1F0F;
+                background: #FCE0BD;
+                padding: 0 8px;
+                border-radius: 12px;
+            }
+            p{
+                position: relative;
+            }
+            p:before{
+                content: '|';
+                position: absolute;
+                left: -10px;
+                color: rgba(255, 255, 255,0.1);
+            }
+            p:first-child:before{
+                display: none;
+            }
+        }
+    }
+}
+</style>
