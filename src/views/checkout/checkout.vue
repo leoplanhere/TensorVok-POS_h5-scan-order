@@ -419,7 +419,6 @@ onUnmounted(() => {
     font-size: 10px;
     color: #999;
     line-height: 1.2;
-    margin: 2px 0 4px 0;
     word-break: break-all;
 }
 
@@ -427,7 +426,7 @@ onUnmounted(() => {
 .thpic ul li {
     height: auto !important;
     padding: 10px;
-    align-items: flex-start;
+    align-items: center;
 }
 
 .thpic .text {
@@ -526,8 +525,8 @@ onUnmounted(() => {
 	display:none;
 }
 .thpic .icon {
-	width:0.98rem;
-	height:0.98rem;
+	width:1.2rem;
+	height:1.2rem;
 	border-radius:0.2rem;
 	overflow:hidden;
 }
@@ -575,7 +574,7 @@ onUnmounted(() => {
 }
 .thpic .text span {
 	font-weight:400;
-	font-size:0.24rem;
+	font-size:0.3rem;
 	color:#999999;
 }
 .checkout .itemflex {
