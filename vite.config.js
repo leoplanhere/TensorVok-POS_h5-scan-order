@@ -8,7 +8,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 import { VitePWA } from 'vite-plugin-pwa' // 1. 引入 PWA 插件
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     vue(),
     basicSsl(),
@@ -28,16 +28,16 @@ export default defineConfig({
         description: 'Scan Order',
         theme_color: '#ffffff',
         background_color: '#ffffff',
-        display: 'standalone', // 核心：实现沉浸式 App 体验
-        start_url: '.',
+        display: 'standalone',
+        start_url: command === 'build' ? '/sqr/' : '/',
         icons: [
           {
-            src: 'pwa-192x192.png', // 确保 public 目录下有此文件
+            src: 'pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png', // 确保 public 目录下有此文件
+            src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png'
           },
@@ -50,20 +50,25 @@ export default defineConfig({
         ]
       },
       devOptions: {
-        enabled: true // 允许在开发模式下调试 PWA
+        enabled: true
       }
     })
   ],
-  base: './',
+  base: command === 'build' ? '/sqr/' : './',
   server: {
     https: true,
     host: '0.0.0.0',
+    hmr: command === 'serve' ? {
+      host: 'localhost',
+      port: 5173,
+      protocol: 'ws'
+    } : undefined,
     proxy: {
       '/api': {
         target: 'https://pos.uhimao.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/api') // Vite 官方推荐的写法
+        rewrite: (path) => path.replace(/^\/api/, '/api')
       },
     },
   },
-})
+}))

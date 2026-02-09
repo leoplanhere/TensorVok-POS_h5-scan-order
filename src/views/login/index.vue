@@ -194,10 +194,8 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/static/login-bg.jpg');
-  background-size: cover;
-  background-position: center;
-  opacity: 0.1;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  opacity: 1;
 }
 
 .login-card {

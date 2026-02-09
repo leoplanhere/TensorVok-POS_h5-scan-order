@@ -509,11 +509,13 @@ onMounted(() => {
     if(q.id && q.tab_id){
         setShopUid(q.id)
         if(shopuid.value !== q.id || tableOpenInfo.value.tableId !== q.tab_id) clearCart()
-        api.scanOpenTable({ shop_id: q.id, table_manage_id: q.tab_id }).then(res => {
+        api.scanOpenTable({ shop_id: q.id, table_manage_id: q.tab_id }, { silent: true }).then(res => {
             if(res.code == 1) {
                 bindTableInfo(res.data) 
                 if (res.data.id && !res.data.reserve_list_id) tableOpenInfo.value.reserve_list_id = res.data.id
             }
+        }).catch(err => {
+            console.error('scanOpenTable error:', err)
         })
         getShopInfo({ id: q.id })
     }
@@ -521,11 +523,13 @@ onMounted(() => {
     loadAdvertisement()
     loadShopDetail()
 
-    api.getRemarkLabels({ shop_id: shopuid.value }).then(res => {
+    api.getRemarkLabels({ shop_id: shopuid.value }, { silent: true }).then(res => {
         if(res.code == 1) labelList.value = res.data.map(v => ({ ...v, boole: false }))
+    }).catch(err => {
+        console.error('getRemarkLabels error:', err)
     })
 
-    api.getFoodCategory({ dpid: shopuid.value, strip: 99 }).then(res => {
+    api.getFoodCategory({ dpid: shopuid.value, strip: 99 }, { silent: true }).then(res => {
         if(res.code == 1 && res.data && res.data.data) {
             setClassifyList(res.data.data.filter(i => i.name !== '临时类' && i.name !== '小料').map(i => ({ 
                 ...i, 
@@ -533,9 +537,11 @@ onMounted(() => {
                 image: i.image || '' 
             })))
         }
+    }).catch(err => {
+        console.error('getFoodCategory error:', err)
     })
 
-    api.getFoodMenu({ dpid: shopuid.value }).then(res => {
+    api.getFoodMenu({ dpid: shopuid.value }, { silent: true }).then(res => {
         if(res.data) {
             const addons = res.data.filter(f => f.flname == '小料').map(f => ({ ...f, boole: false, number: 0 }))
             setIngredientList(addons)
@@ -552,6 +558,8 @@ onMounted(() => {
                 }
             }))
         }
+    }).catch(err => {
+        console.error('getFoodMenu error:', err)
     })
 })
 </script>

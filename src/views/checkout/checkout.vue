@@ -120,12 +120,6 @@
             </div>
         </div>
     </div>
-
-    <form v-if="paymentParams" ref="netsForm" :action="paymentParams.action" method="POST" style="display: none;" target="_blank">
-        <input type="hidden" name="apiKey" :value="paymentParams.apiKey" />
-        <input type="hidden" name="payload" :value="paymentParams.payload" />
-        <input type="hidden" name="hmac" :value="paymentParams.hmac" />
-    </form>
 </template>
 
 <script setup>
@@ -151,8 +145,6 @@ const isExpanded = ref(false)
 const ordernone = ref('') // 文本域备注
 const deliveryType = ref('Dinein')
 const selectedPayMethod = ref('creditCard')
-const paymentParams = ref(null)
-const netsForm = ref(null)
 const timer = ref(null)
 const timePopupShow = ref(false)
 const selectedTime = ref('')
@@ -320,6 +312,33 @@ const handleFinalCheckoutProcess = async (paymentOrder) => {
     }
 }
 
+const submitNetsPaymentForm = (data) => {
+    // 创建临时表单并立即提交（在同步上下文中，避免Safari阻止）
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = data.action;
+    form.target = '_blank';
+    form.style.display = 'none';
+
+    const fields = {
+        apiKey: data.apiKey,
+        payload: data.payload,
+        hmac: data.hmac
+    };
+
+    for (const [key, value] of Object.entries(fields)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+};
+
 const goPay = async () => {
     if (selectedPayMethod.value === 'yeahPay') {
         // 此处你可以接入 YeahPay 的逻辑，目前先模拟成功
@@ -327,6 +346,15 @@ const goPay = async () => {
         showToast('YeahPay Processing...');
         // 模拟支付成功并执行下单
         await handleFinalCheckoutProcess("YEAH_" + Date.now());
+        return;
+    }
+
+    // 关键：在click事件的同步处理器中立即打开一个新窗口
+    // Safari只认可这样在用户交互直接上下文中打开的窗口
+    const paymentWindow = window.open('about:blank', '_blank');
+    
+    if (!paymentWindow) {
+        showFailToast('Please enable pop-ups for this site');
         return;
     }
 
@@ -339,9 +367,25 @@ const goPay = async () => {
         });
         
         if (response.code === 1) {
-            paymentParams.value = response.data;
-            await nextTick();
-            if (netsForm.value) netsForm.value.submit();
+            // 在已打开的窗口中动态生成表单并自动提交
+            const apiKey = response.data.apiKey.replace(/"/g, '&quot;');
+            const payload = response.data.payload.replace(/"/g, '&quot;');
+            const hmac = response.data.hmac.replace(/"/g, '&quot;');
+            const action = response.data.action;
+            
+            // 构建HTML字符串（转义关闭标签避免Vue解析器问题）
+            let html = '<!DOCTYPE html><html><head><title>Processing Payment...</title><' + '/head><body>' +
+                '<form id="paymentForm" action="' + action + '" method="POST">' +
+                '<input type="hidden" name="apiKey" value="' + apiKey + '" />' +
+                '<input type="hidden" name="payload" value="' + payload + '" />' +
+                '<input type="hidden" name="hmac" value="' + hmac + '" />' +
+                '<' + '/form>' +
+                '<p style="text-align:center; color:#666; font-family:sans-serif; margin-top:50px;">Redirecting to payment gateway...</p>' +
+                '<' + 'script>document.getElementById("paymentForm").submit();<' + '/script>' +
+                '<' + '/body><' + '/html>';
+            
+            paymentWindow.document.write(html);
+            paymentWindow.document.close();
 
             showLoadingToast({ message: 'Waiting for payment...', duration: 0 });
 
@@ -352,6 +396,9 @@ const goPay = async () => {
                         clearInterval(timer.value);
                         closeToast();
                         await handleFinalCheckoutProcess(response.data.merchantTxnRef);
+                        if (paymentWindow) {
+                            try { paymentWindow.close(); } catch (e) { }
+                        }
                     }
                 } catch (e) {
                     console.error('轮询异常', e);
@@ -360,6 +407,10 @@ const goPay = async () => {
         }
     } catch (e) {
         console.error('支付调起失败', e);
+        showFailToast('Payment failed, please try again');
+        if (paymentWindow) {
+            try { paymentWindow.close(); } catch (e) { }
+        }
     } finally {
         loading.value = false;
     }
