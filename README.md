@@ -35,8 +35,8 @@ Leveraging **TensorVok’s** core AI capabilities, this system supports:
 The frontend source code for this H5 ordering system is now open-sourced to empower developers and global business partners.
 
 * **Official Website:** [tensorvok.com](https://tensorvok.com)
-* **Business Inquiries:** For access to the **Full SaaS Cloud Management System** or to discuss **White-Label (Private Label)** opportunities, please visit our [AI Vision Partner Program](https://tensorvok.com/channel-partner-program/).
-* **Custom R&D:** For large-scale restaurant chains requiring bespoke features or AI integration, explore our [Algorithms Custom R&D](https://tensorvok.com/algorithms-custom-rd/) services.
+* **Business Inquiries:** For access to the **Full SaaS Cloud Management System** or to discuss **White-Label (Private Label)** opportunities, please visit our [AI Vision Partner Program](https://tensorvok.com/ai-vision-partner-program-aiot-integration-for-sis/).
+* **Custom R&D:** For large-scale restaurant chains requiring bespoke features or AI integration, explore our [Algorithms Custom R&D](https://tensorvok.com/custom-ai-vision-rd-bespoke-yolo-edge-ai-solutions/) services.
 
 ---
 
